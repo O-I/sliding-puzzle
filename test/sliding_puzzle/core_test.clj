@@ -19,5 +19,13 @@
 
 (deftest solved?-test
   (testing "solved?"
-      (is (true?  (solved? [1 2 3 4 5 6 7 8 0])))
-      (is (false? (solved? [1 5 2 3 4 0 7 8 6])))))
+    (is (true?  (solved? [1 2 3 4 5 6 7 8 0])))
+    (is (false? (solved? [1 5 2 3 4 0 7 8 6])))))
+
+(deftest blank-at-row-test
+  (testing "blank-at-row"
+    (is (= 2 (blank-at-row [2 3 1 4 7 5 0 6 8])))))
+
+(deftest blank-at-column-test
+  (testing "blank-at-column"
+    (is (= 0 (blank-at-column [2 3 1 4 7 5 0 6 8])))))

@@ -22,4 +22,14 @@
   [grid]
   (= (conj (vec (range 1 (tile-count grid))) 0) grid))
 
+(defn blank-at-row
+  "Returns the row of the blank tile"
+  [grid]
+  (quot (blank-at grid) size))
+
+(defn blank-at-column
+  "Returns the column of the blank tile"
+  [grid]
+  (rem (blank-at grid) size))
+
 (defn -main [] )
