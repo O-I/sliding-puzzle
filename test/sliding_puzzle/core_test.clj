@@ -34,3 +34,8 @@
   (testing "slices"
     (is (= '((1 2 3 4) (2 3 4) (3 4) (4))
            (slices [1 2 3 4])))))
+
+(deftest inversions-test
+  (testing "inversions"
+    (is (= 8 (inversions [2 6 3 1 0 4 7 8 5])))
+    (is (= 0 (inversions [1 2 3 4 5 6 7 8 0])))))

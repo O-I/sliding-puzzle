@@ -36,6 +36,15 @@
   "Returns a list of tile-count many lists where each
   is the previous one with the head dropped"
   [grid]
-  (map #(drop % grid) (range 0 (tile-count grid))))
+  (map #(drop % grid) (range (tile-count grid))))
+
+(defn inversions
+  "Returns the number of inversions in a grid"
+  [grid]
+  (reduce +
+    (map count
+         (map (fn [n]
+           (filter #(and (< 0 %) (< % (nth grid n))) (drop n grid)))
+                   (range (tile-count grid))))))
 
 (defn -main [] )
