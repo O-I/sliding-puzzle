@@ -43,8 +43,7 @@
   [grid]
   (reduce +
     (map count
-         (map (fn [n]
-           (filter #(and (< 0 %) (< % (nth grid n))) (drop n grid)))
-                   (range (tile-count grid))))))
+         (map (fn [n] (filter #(< 0 % (nth grid n)) (drop n grid)))
+              (range (tile-count grid))))))
 
 (defn -main [] )
