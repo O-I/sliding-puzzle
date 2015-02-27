@@ -32,4 +32,10 @@
   [grid]
   (rem (blank-at grid) size))
 
+(defn slices
+  "Returns a list of tile-count many lists where each
+  is the previous one with the head dropped"
+  [grid]
+  (map #(drop % grid) (range 0 (tile-count grid))))
+
 (defn -main [] )

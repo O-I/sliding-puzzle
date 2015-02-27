@@ -29,3 +29,8 @@
 (deftest blank-at-column-test
   (testing "blank-at-column"
     (is (= 0 (blank-at-column [2 3 1 4 7 5 0 6 8])))))
+
+(deftest slices-test
+  (testing "slices"
+    (is (= '((1 2 3 4) (2 3 4) (3 4) (4))
+           (slices [1 2 3 4])))))
