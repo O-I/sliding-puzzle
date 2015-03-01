@@ -46,4 +46,11 @@
          (map (fn [n] (filter #(< 0 % (nth (:tiles grid) n)) (drop n (:tiles grid))))
               (range (tile-count grid))))))
 
+(defn solvable?
+  "Returns true if the grid is solvable"
+  [grid]
+  (or
+    (and (odd?  (:size grid))  (even? (inversions grid)))
+    (and (even? (:size grid)) ((even? (inversions grid)) (odd? (blank-at-row grid))))))
+
 (defn -main [] )

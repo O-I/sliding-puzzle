@@ -39,3 +39,9 @@
   (testing "inversions"
     (is (= 8 (inversions {:tiles [2 6 3 1 0 4 7 8 5]})))
     (is (= 0 (inversions {:tiles [1 2 3 4 5 6 7 8 0]})))))
+
+(deftest solvable?-test
+  (testing "solvable?"
+    (is (true?  (solvable? {:size 3 :tiles [8 6 7 2 5 4 3 0 1]})))
+    (is (false? (solvable? {:size 3 :tiles [1 4 6 5 2 0 8 3 7]})))
+    (is (false? (solvable? {:size 3 :tiles [1 2 3 4 5 6 8 7 0]})))))
