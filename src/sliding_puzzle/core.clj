@@ -53,4 +53,61 @@
     (and (odd?  (:size grid))  (even? (inversions grid)))
     (and (even? (:size grid)) ((even? (inversions grid)) (odd? (blank-at-row grid))))))
 
+(defn swap
+  "Swaps two elements at positions i and j in vector v"
+  [v i j]
+  (assoc v j (v i) i (v j)))
+
+(defn blank-at-top?
+  "Returns true if the blank tile is in the first row of a grid"
+  [grid]
+  (zero? (blank-at-row grid)))
+
+(defn blank-at-bottom?
+  "Returns true if the blank tile is in the last row of a grid"
+  [grid]
+  (= (dec (:size grid)) (blank-at-row grid)))
+
+(defn blank-at-far-left?
+  "Returns true if the blank tile is in the first column of a grid"
+  [grid]
+  (zero? (blank-at-column grid)))
+
+(defn blank-at-far-right?
+  "Returns true if the blank tile is in the last column of a grid"
+  [grid]
+  (= (dec (:size grid)) (blank-at-column grid)))
+
+(defn slide-up
+  "Slides a tile up"
+  [grid]
+  (if (blank-at-bottom? grid)
+    grid
+    (let [size (:size grid) blank (blank-at grid) tile (+ blank size)]
+      (hash-map :size size :tiles (swap (:tiles grid) blank tile)))))
+
+(defn slide-down
+  "Slides a tile down"
+  [grid]
+  (if (blank-at-top? grid)
+    grid
+    (let [size (:size grid) blank (blank-at grid) tile (- blank size)]
+      (hash-map :size size :tiles (swap (:tiles grid) blank tile)))))
+
+(defn slide-left
+  "Slides a tile left"
+  [grid]
+  (if (blank-at-far-right? grid)
+    grid
+    (let [size (:size grid) blank (blank-at grid) tile (inc blank)]
+      (hash-map :size size :tiles (swap (:tiles grid) blank tile)))))
+
+(defn slide-right
+  "Slides a tile right"
+  [grid]
+  (if (blank-at-far-left? grid)
+    grid
+    (let [size (:size grid) blank (blank-at grid) tile (dec blank)]
+      (hash-map :size size :tiles (swap (:tiles grid) blank tile)))))
+
 (defn -main [] )
