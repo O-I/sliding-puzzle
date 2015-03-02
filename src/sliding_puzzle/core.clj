@@ -110,4 +110,11 @@
     (let [size (:size grid) blank (blank-at grid) tile (dec blank)]
       (hash-map :size size :tiles (swap (:tiles grid) blank tile)))))
 
+(defn slides
+  "Returns a vector of all possible grid states from the current one.
+   This excludes any moves that result in no change to the current state."
+   [grid]
+   (filter #(not= grid %)
+           ((juxt slide-up slide-down slide-left slide-right) grid)))
+
 (defn -main [] )
