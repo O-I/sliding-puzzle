@@ -9,6 +9,10 @@
       (is (= 9 (count (:tiles puz))))
       (is (= (set (range 9)) (set (:tiles puz)))))))
 
+(deftest tile-at-test
+  (testing "tile-at"
+    (is (= 6 (tile-at {:tiles [2 3 1 4 7 5 0 6 8]} 0)))))
+
 (deftest blank-at-test
   (testing "blank-at"
     (is (= 6 (blank-at {:tiles [2 3 1 4 7 5 0 6 8]})))))
@@ -21,6 +25,14 @@
   (testing "solved?"
     (is (true?  (solved? {:tiles [1 2 3 4 5 6 7 8 0]})))
     (is (false? (solved? {:tiles [1 5 2 3 4 0 7 8 6]})))))
+
+(deftest tile-at-row-test
+  (testing "tile-at-row"
+    (is (= 2 (tile-at-row {:size 3 :tiles [2 3 1 4 7 5 0 6 8]} 0)))))
+
+(deftest tile-at-column-test
+  (testing "tile-at-column"
+    (is (= 0 (tile-at-column {:size 3 :tiles [2 3 1 4 7 5 0 6 8]} 0)))))
 
 (deftest blank-at-row-test
   (testing "blank-at-row"

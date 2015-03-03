@@ -7,10 +7,15 @@
    [n]
    (hash-map :size n :tiles (shuffle (range (* n n)))))
 
+(defn tile-at
+  "Finds the position of a tile in a grid"
+  [grid tile]
+  (.indexOf (:tiles grid) tile))
+
 (defn blank-at
   "Finds the blank in the grid represented by 0"
   [grid]
-  (.indexOf (:tiles grid) 0))
+  (tile-at grid 0))
 
 (defn tile-count
   "Returns the number of tiles in grid plus the blank"
@@ -22,15 +27,25 @@
   [grid]
   (= (conj (vec (range 1 (tile-count grid))) 0) (:tiles grid)))
 
+(defn tile-at-row
+  "Returns the row of the given tile"
+  [grid tile]
+  (quot (tile-at grid tile) (:size grid)))
+
+(defn tile-at-column
+  "Returns the column of the given tile"
+  [grid tile]
+  (rem (tile-at grid tile) (:size grid)))
+
 (defn blank-at-row
   "Returns the row of the blank tile"
   [grid]
-  (quot (blank-at grid) (:size grid)))
+  (tile-at-row grid 0))
 
 (defn blank-at-column
   "Returns the column of the blank tile"
   [grid]
-  (rem (blank-at grid) (:size grid)))
+  (tile-at-column grid 0))
 
 (defn slices
   "Returns a list of tile-count many lists where each
