@@ -22,10 +22,15 @@
   [grid]
   (count (:tiles grid)))
 
+(defn goal
+  "Returns the expected goal state of a grid"
+  [grid]
+  (hash-map :size (:size grid) :tiles (conj (vec (range 1 (tile-count grid))) 0)))
+
 (defn solved?
   "Returns true if grid is in a solved state"
   [grid]
-  (= (conj (vec (range 1 (tile-count grid))) 0) (:tiles grid)))
+  (= (goal grid) grid))
 
 (defn tile-at-row
   "Returns the row of the given tile"
@@ -131,5 +136,10 @@
    [grid]
    (filter #(not= grid %)
            ((juxt slide-up slide-down slide-left slide-right) grid)))
+
+(defn manhattan-distance
+  "Calculates the Manhattan distance between two points"
+  [u v]
+  (reduce + (map #(Math/abs (- %1 %2)) u v)))
 
 (defn -main [] )

@@ -21,10 +21,15 @@
   (testing "tile-count"
     (is (= 9 (tile-count (random-grid 3))))))
 
+(deftest goal-test
+  (testing "goal"
+    (is (=       {:size 3 :tiles [1 2 3 4 5 6 7 8 0]}
+           (goal {:size 3 :tiles [2 3 1 4 7 5 0 6 8]})))))
+
 (deftest solved?-test
   (testing "solved?"
-    (is (true?  (solved? {:tiles [1 2 3 4 5 6 7 8 0]})))
-    (is (false? (solved? {:tiles [1 5 2 3 4 0 7 8 6]})))))
+    (is (true?  (solved? {:size 3 :tiles [1 2 3 4 5 6 7 8 0]})))
+    (is (false? (solved? {:size 3 :tiles [1 5 2 3 4 0 7 8 6]})))))
 
 (deftest tile-at-row-test
   (testing "tile-at-row"
@@ -120,3 +125,9 @@
     (is (=        [{:size 3 :tiles [1 2 3 4 5 0 7 8 6]}
                    {:size 3 :tiles [1 2 3 4 5 6 7 0 8]}]
            (slides {:size 3 :tiles [1 2 3 4 5 6 7 8 0]})))))
+
+(deftest manhattan-distance-test
+  (testing "manhattan-distance"
+    (is (= 0 (manhattan-distance [0 0] [0 0])))
+    (is (= 4 (manhattan-distance [1 2] [3 0])))
+    (is (= 6 (manhattan-distance [0 0] [3 3])))))
