@@ -142,4 +142,19 @@
   [u v]
   (reduce + (map #(Math/abs (- %1 %2)) u v)))
 
+(defn targets
+  "Returns a list of [x y] coordinates for each tile's position in grid
+   g1 in relation to grid g2"
+  [g1 g2]
+  (map (juxt #(tile-at-row g1 %) #(tile-at-column g1 %))
+       (filter #(not= 0 %) (:tiles g2))))
+
+(defn cost
+  "Calculates the cost of a grid state"
+  [grid]
+    (reduce +
+      (map #(manhattan-distance %1 %2)
+            (targets grid grid)
+            (targets (goal grid) grid))))
+
 (defn -main [] )

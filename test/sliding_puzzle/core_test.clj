@@ -131,3 +131,17 @@
     (is (= 0 (manhattan-distance [0 0] [0 0])))
     (is (= 4 (manhattan-distance [1 2] [3 0])))
     (is (= 6 (manhattan-distance [0 0] [3 3])))))
+
+(deftest targets-test
+  (testing "targets"
+    (let [grid {:size 3 :tiles [8 6 7 2 5 4 3 0 1]}
+          goal {:size 3 :tiles [1 2 3 4 5 6 7 8 0]}]
+      (is (= '([0 0] [0 1] [0 2] [1 0] [1 1] [1 2] [2 0] [2 2])
+              (targets grid grid))
+      (is (= '([2 1] [1 2] [2 0] [0 1] [1 1] [1 0] [0 2] [0 0])
+              (targets goal grid)))))))
+
+(deftest cost-test
+  (testing "cost"
+    (is (= 21 (cost {:size 3 :tiles [8 6 7 2 5 4 3 0 1]})))
+    (is (= 0  (cost {:size 3 :tiles [1 2 3 4 5 6 7 8 0]})))))
