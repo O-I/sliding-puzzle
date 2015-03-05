@@ -152,9 +152,8 @@
 (defn cost
   "Calculates the cost of a grid state"
   [grid]
-    (reduce +
-      (map #(manhattan-distance %1 %2)
-            (targets grid grid)
-            (targets (goal grid) grid))))
+    (let [current-state (targets grid grid)
+          goal-state    (targets (goal grid) grid)]
+    (reduce + (map #(manhattan-distance %1 %2) current-state goal-state))))
 
 (defn -main [] )
