@@ -1,4 +1,5 @@
-(ns sliding-puzzle.core)
+(ns sliding-puzzle.core
+  (:require [clojure.data.priority-map :refer :all]))
 
 (defn random-grid
   "Builds a map that represents a sliding puzzle grid.
