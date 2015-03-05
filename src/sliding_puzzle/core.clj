@@ -9,8 +9,8 @@
 
 (defn tile-at
   "Finds the position of a tile in a grid"
-  [grid tile]
-  (.indexOf (:tiles grid) tile))
+  [{:keys [tiles]} tile]
+  (.indexOf tiles tile))
 
 (defn blank-at
   "Finds the blank in the grid represented by 0"
@@ -19,13 +19,13 @@
 
 (defn tile-count
   "Returns the number of tiles in grid plus the blank"
-  [grid]
-  (count (:tiles grid)))
+  [{:keys [tiles]}]
+  (count tiles))
 
 (defn goal
   "Returns the expected goal state of a grid"
-  [grid]
-  (hash-map :size (:size grid) :tiles (conj (vec (range 1 (tile-count grid))) 0)))
+  [{:keys [size] :as grid}]
+  (hash-map :size size :tiles (conj (vec (range 1 (tile-count grid))) 0)))
 
 (defn solved?
   "Returns true if grid is in a solved state"
@@ -34,13 +34,13 @@
 
 (defn tile-at-row
   "Returns the row of the given tile"
-  [grid tile]
-  (quot (tile-at grid tile) (:size grid)))
+  [{:keys [size] :as grid} tile]
+  (quot (tile-at grid tile) size))
 
 (defn tile-at-column
   "Returns the column of the given tile"
-  [grid tile]
-  (rem (tile-at grid tile) (:size grid)))
+  [{:keys [size] :as grid} tile]
+  (rem (tile-at grid tile) size))
 
 (defn blank-at-row
   "Returns the row of the blank tile"
@@ -55,23 +55,23 @@
 (defn slices
   "Returns a list of tile-count many lists where each
   is the previous one with the head dropped"
-  [grid]
-  (map #(drop % (:tiles grid)) (range (tile-count grid))))
+  [{:keys [tiles] :as grid}]
+  (map #(drop % tiles) (range (tile-count grid))))
 
 (defn inversions
   "Returns the number of inversions in a grid"
-  [grid]
+  [{:keys [tiles] :as grid}]
   (reduce +
     (map count
-         (map (fn [n] (filter #(< 0 % (nth (:tiles grid) n)) (drop n (:tiles grid))))
+         (map (fn [n] (filter #(< 0 % (nth tiles n)) (drop n tiles)))
               (range (tile-count grid))))))
 
 (defn solvable?
   "Returns true if the grid is solvable"
-  [grid]
+  [{:keys [size] :as grid}]
   (or
-    (and (odd?  (:size grid))  (even? (inversions grid)))
-    (and (even? (:size grid)) ((even? (inversions grid)) (odd? (blank-at-row grid))))))
+    (and (odd?  size)  (even? (inversions grid)))
+    (and (even? size) ((even? (inversions grid)) (odd? (blank-at-row grid))))))
 
 (defn swap
   "Swaps two elements at positions i and j in vector v"
@@ -85,8 +85,8 @@
 
 (defn blank-at-bottom?
   "Returns true if the blank tile is in the last row of a grid"
-  [grid]
-  (= (dec (:size grid)) (blank-at-row grid)))
+  [{:keys [size] :as grid}]
+  (= (dec size) (blank-at-row grid)))
 
 (defn blank-at-far-left?
   "Returns true if the blank tile is in the first column of a grid"
@@ -95,40 +95,40 @@
 
 (defn blank-at-far-right?
   "Returns true if the blank tile is in the last column of a grid"
-  [grid]
-  (= (dec (:size grid)) (blank-at-column grid)))
+  [{:keys [size] :as grid}]
+  (= (dec size) (blank-at-column grid)))
 
 (defn slide-up
   "Slides a tile up"
-  [grid]
+  [{:keys [size tiles] :as grid}]
   (if (blank-at-bottom? grid)
     grid
-    (let [size (:size grid) blank (blank-at grid) tile (+ blank size)]
-      (hash-map :size size :tiles (swap (:tiles grid) blank tile)))))
+    (let [blank (blank-at grid) tile (+ blank size)]
+      (hash-map :size size :tiles (swap tiles blank tile)))))
 
 (defn slide-down
   "Slides a tile down"
-  [grid]
+  [{:keys [size tiles] :as grid}]
   (if (blank-at-top? grid)
     grid
-    (let [size (:size grid) blank (blank-at grid) tile (- blank size)]
-      (hash-map :size size :tiles (swap (:tiles grid) blank tile)))))
+    (let [blank (blank-at grid) tile (- blank size)]
+      (hash-map :size size :tiles (swap tiles blank tile)))))
 
 (defn slide-left
   "Slides a tile left"
-  [grid]
+  [{:keys [size tiles] :as grid}]
   (if (blank-at-far-right? grid)
     grid
-    (let [size (:size grid) blank (blank-at grid) tile (inc blank)]
-      (hash-map :size size :tiles (swap (:tiles grid) blank tile)))))
+    (let [blank (blank-at grid) tile (inc blank)]
+      (hash-map :size size :tiles (swap tiles blank tile)))))
 
 (defn slide-right
   "Slides a tile right"
-  [grid]
+  [{:keys [size tiles] :as grid}]
   (if (blank-at-far-left? grid)
     grid
-    (let [size (:size grid) blank (blank-at grid) tile (dec blank)]
-      (hash-map :size size :tiles (swap (:tiles grid) blank tile)))))
+    (let [blank (blank-at grid) tile (dec blank)]
+      (hash-map :size size :tiles (swap tiles blank tile)))))
 
 (defn slides
   "Returns a vector of all possible grid states from the current one.
