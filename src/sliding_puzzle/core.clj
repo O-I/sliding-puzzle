@@ -72,7 +72,7 @@
   [{:keys [size] :as grid}]
   (or
     (and (odd?  size)  (even? (inversions grid)))
-    (and (even? size) ((even? (inversions grid)) (odd? (blank-at-row grid))))))
+    (and (even? size) (= (even? (inversions grid)) (odd? (blank-at-row grid))))))
 
 (defn swap
   "Swaps two elements at positions i and j in vector v"
