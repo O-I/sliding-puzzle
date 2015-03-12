@@ -145,3 +145,15 @@
   (testing "cost"
     (is (= 21 (cost {:size 3 :tiles [8 6 7 2 5 4 3 0 1]})))
     (is (= 0  (cost {:size 3 :tiles [1 2 3 4 5 6 7 8 0]})))))
+
+(deftest solve-test
+  (testing "solve, ida-star, search"
+    (let [unsolvable {:size 3 :tiles [6 4 1 8 2 7 5 0 3]}
+            solvable {:size 3 :tiles [2 6 3 1 0 4 7 8 5]}]
+    (is (= [] (solve unsolvable)))
+    (is (= '([2 6 3 1 0 4 7 8 5] [2 0 3 1 6 4 7 8 5] [0 2 3 1 6 4 7 8 5]
+             [1 2 3 0 6 4 7 8 5] [1 2 3 7 6 4 0 8 5] [1 2 3 7 6 4 8 0 5]
+             [1 2 3 7 0 4 8 6 5] [1 2 3 7 4 0 8 6 5] [1 2 3 7 4 5 8 6 0]
+             [1 2 3 7 4 5 8 0 6] [1 2 3 7 4 5 0 8 6] [1 2 3 0 4 5 7 8 6]
+             [1 2 3 4 0 5 7 8 6] [1 2 3 4 5 0 7 8 6] [1 2 3 4 5 6 7 8 0])
+           (map :tiles (solve solvable)))))))
