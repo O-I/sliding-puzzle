@@ -157,4 +157,38 @@
           goal-state    (targets (goal grid) grid)]
     (reduce + (map #(manhattan-distance %1 %2) current-state goal-state))))
 
+(defn search
+  "IDA* algorithm"
+  [state bound]
+  (let [[{:keys [steps current toll]} priority] (peek state)
+        journey [steps current]]
+    (if (solved? current)
+        (flatten steps)
+        (let [fee (inc toll)]
+          (if (> priority bound)
+            priority
+            (search (into (pop state)
+                    (for [g (filter #(not= % (-> steps flatten last))
+                                     (slides current))]
+                         [{:steps journey :current g :toll fee}
+                          (+ fee (cost g))])) bound))))))
+
+(defn ida-star
+  "IDA* wrapper"
+  [grid bound]
+    (loop [threshold bound]
+      (let [state (priority-map {:steps [] :current grid :toll 0} (cost grid))
+            result (search state threshold)]
+        (if (coll? result)
+            result
+            (recur result)))))
+
+(defn solve
+  "Returns the minimum move solution for a grid
+   or an empty vector if the grid is unsolvable"
+   [grid]
+   (if (solvable? grid)
+       (ida-star grid (cost grid))
+       []))
+
 (defn -main [] )
