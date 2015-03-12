@@ -161,14 +161,14 @@
   "IDA* algorithm"
   [state bound]
   (let [[{:keys [steps current toll]} priority] (peek state)
-        journey [steps current]]
+        journey (conj steps current)]
     (if (solved? current)
-        (flatten steps)
+        journey
         (let [fee (inc toll)]
           (if (> priority bound)
             priority
             (search (into (pop state)
-                    (for [g (filter #(not= % (-> steps flatten last))
+                    (for [g (filter #(not= % (last steps))
                                      (slides current))]
                          [{:steps journey :current g :toll fee}
                           (+ fee (cost g))])) bound))))))
