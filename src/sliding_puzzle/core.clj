@@ -158,26 +158,32 @@
     (reduce + (map #(manhattan-distance %1 %2) current-state goal-state))))
 
 (defn search
-  "IDA* algorithm"
+  "IDA* algorithm — takes a priority queue of grid states and a bound.
+   If the current grid state is solved, returns a vector of the steps
+   taken to solve the initial state. If the priority exceeds the given
+   bound, return it to ida-star. Otherwise, pop the current state, push
+   all next states onto the priority queue with their respective costs,
+   and recur with updated queue and bound."
   [state bound]
-  (let [[{:keys [steps current toll]} priority] (peek state)
-        journey (conj steps current)]
-    (if (solved? current)
-        journey
-        (let [fee (inc toll)]
+  (loop [state state bound bound]
+    (let [[[steps current toll] priority] (peek state)
+          journey (conj steps current) fee (inc toll)]
+      (if (solved? current)
+          journey
           (if (> priority bound)
-            priority
-            (search (into (pop state)
-                    (for [g (filter #(not= % (last steps))
-                                     (slides current))]
-                         [{:steps journey :current g :toll fee}
-                          (+ fee (cost g))])) bound))))))
+              priority
+              (recur (into (pop state)
+                      (for [g (filter #(not= % (last steps)) (slides current))]
+                           [[journey g fee] (+ fee (cost g))]))
+                     bound))))))
 
 (defn ida-star
-  "IDA* wrapper"
+  "IDA* wrapper — takes a grid and bound, initially set to the grid's cost and
+   calls search with the initial state and bound. If a collection is returned,
+   we're done. Otherwise, recur with the returned bound."
   [grid bound]
     (loop [threshold bound]
-      (let [state (priority-map {:steps [] :current grid :toll 0} (cost grid))
+      (let [state (priority-map [[] grid 0] (cost grid))
             result (search state threshold)]
         (if (coll? result)
             result
