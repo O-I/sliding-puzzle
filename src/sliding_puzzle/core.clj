@@ -71,7 +71,7 @@
   "Returns true if the grid is solvable"
   [{:keys [size] :as grid}]
   (or
-    (and (odd?  size)  (even? (inversions grid)))
+    (and (odd?  size)    (even? (inversions grid)))
     (and (even? size) (= (even? (inversions grid)) (odd? (blank-at-row grid))))))
 
 (defn swap
@@ -173,7 +173,7 @@
           (if (> priority bound)
               priority
               (recur (into (pop state)
-                      (for [g (filter #(not= % (last steps)) (slides current))]
+                      (for [g (remove #(= % (last steps)) (slides current))]
                            [[journey g fee] (+ fee (cost g))]))
                      bound))))))
 
