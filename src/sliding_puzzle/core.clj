@@ -99,37 +99,40 @@
   [{:keys [size] :as grid}]
   (= (dec size) (blank-at-column grid)))
 
+(defn slide
+  "Slides a tile given a grid and a direction"
+  [{:keys [size tiles] :as grid} direction]
+  (let [blank (blank-at grid)
+        [pred func]
+        (condp = direction
+          :up    [(blank-at-bottom?    grid) (+   blank size)]
+          :down  [(blank-at-top?       grid) (-   blank size)]
+          :left  [(blank-at-far-right? grid) (inc blank)]
+          :right [(blank-at-far-left?  grid) (dec blank)])
+        tile func]
+    (if pred
+        grid
+        (hash-map :size size :tiles (swap tiles blank tile)))))
+
 (defn slide-up
   "Slides a tile up"
-  [{:keys [size tiles] :as grid}]
-  (if (blank-at-bottom? grid)
-    grid
-    (let [blank (blank-at grid) tile (+ blank size)]
-      (hash-map :size size :tiles (swap tiles blank tile)))))
+  [grid]
+  (slide grid :up))
 
 (defn slide-down
   "Slides a tile down"
-  [{:keys [size tiles] :as grid}]
-  (if (blank-at-top? grid)
-    grid
-    (let [blank (blank-at grid) tile (- blank size)]
-      (hash-map :size size :tiles (swap tiles blank tile)))))
+  [grid]
+  (slide grid :down))
 
 (defn slide-left
   "Slides a tile left"
-  [{:keys [size tiles] :as grid}]
-  (if (blank-at-far-right? grid)
-    grid
-    (let [blank (blank-at grid) tile (inc blank)]
-      (hash-map :size size :tiles (swap tiles blank tile)))))
+  [grid]
+  (slide grid :left))
 
 (defn slide-right
   "Slides a tile right"
-  [{:keys [size tiles] :as grid}]
-  (if (blank-at-far-left? grid)
-    grid
-    (let [blank (blank-at grid) tile (dec blank)]
-      (hash-map :size size :tiles (swap tiles blank tile)))))
+  [grid]
+  (slide grid :right))
 
 (defn slides
   "Returns a vector of all possible grid states from the current one.
