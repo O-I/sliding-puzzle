@@ -6,7 +6,7 @@
    :size is the height/width n of the grid and :tiles
    is an n^2 - 1 random vector representing the grid state."
    [n]
-   (hash-map :size n :tiles (shuffle (range (* n n)))))
+   {:size n :tiles (shuffle (range (* n n)))})
 
 (defn tile-at
   "Finds the position of a tile in a grid"
@@ -26,7 +26,7 @@
 (defn goal
   "Returns the expected goal state of a grid"
   [{:keys [size] :as grid}]
-  (hash-map :size size :tiles (conj (vec (range 1 (tile-count grid))) 0)))
+  {:size size :tiles (conj (vec (range 1 (tile-count grid))) 0)})
 
 (defn solved?
   "Returns true if grid is in a solved state"
@@ -112,7 +112,7 @@
         tile func]
     (if pred
         grid
-        (hash-map :size size :tiles (swap tiles blank tile)))))
+        {:size size :tiles (swap tiles blank tile)})))
 
 (defn slide-up
   "Slides a tile up"
