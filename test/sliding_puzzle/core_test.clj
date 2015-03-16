@@ -39,6 +39,10 @@
   (testing "tile-at-column"
     (is (= 0 (tile-at-column {:size 3 :tiles [2 3 1 4 7 5 0 6 8]} 0)))))
 
+(deftest tile-location-test
+  (testing "tile-location"
+    (is (= [2 0] (tile-location {:size 3 :tiles [2 3 1 4 7 5 0 6 8]} 0)))))
+
 (deftest blank-at-row-test
   (testing "blank-at-row"
     (is (= 2 (blank-at-row {:size 3 :tiles [2 3 1 4 7 5 0 6 8]})))))
@@ -46,6 +50,10 @@
 (deftest blank-at-column-test
   (testing "blank-at-column"
     (is (= 0 (blank-at-column {:size 3 :tiles [2 3 1 4 7 5 0 6 8]})))))
+
+(deftest blank-location-test
+  (testing "blank-location"
+    (is (= [2 0] (blank-location {:size 3 :tiles [2 3 1 4 7 5 0 6 8]})))))
 
 (deftest slices-test
   (testing "slices"

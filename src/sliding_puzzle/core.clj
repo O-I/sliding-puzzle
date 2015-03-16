@@ -43,6 +43,11 @@
   [{:keys [size] :as grid} tile]
   (rem (tile-at grid tile) size))
 
+(defn tile-location
+  "Returns the [row column] of the given tile"
+  [grid tile]
+  [(tile-at-row grid tile) (tile-at-column grid tile)])
+
 (defn blank-at-row
   "Returns the row of the blank tile"
   [grid]
@@ -52,6 +57,11 @@
   "Returns the column of the blank tile"
   [grid]
   (tile-at-column grid 0))
+
+(defn blank-location
+  "Returns the [row column] of the blank tile"
+  [grid]
+  [(blank-at-row grid) (blank-at-column grid)])
 
 (defn slices
   "Returns a list of tile-count many lists where each
