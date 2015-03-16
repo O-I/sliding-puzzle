@@ -109,20 +109,33 @@
   [{:keys [size] :as grid}]
   (= (dec size) (blank-at-column grid)))
 
+(defn manhattan-distance
+  "Calculates the Manhattan distance between two points"
+  [u v]
+  (reduce + (map #(Math/abs (- %1 %2)) u v)))
+
 (defn slide
   "Slides a tile given a grid and a direction"
   [{:keys [size tiles] :as grid} direction]
   (let [blank (blank-at grid)
-        [pred func]
+        [pred index]
         (condp = direction
           :up    [(blank-at-bottom?    grid) (+   blank size)]
           :down  [(blank-at-top?       grid) (-   blank size)]
           :left  [(blank-at-far-right? grid) (inc blank)]
           :right [(blank-at-far-left?  grid) (dec blank)])
-        tile func]
+        tile index]
     (if pred
         grid
-        {:size size :tiles (swap tiles blank tile)})))
+        (let [slid-grid {:size size :tiles (swap tiles blank tile)}
+              slid-tile ((:tiles slid-grid) blank)
+              slid-from (blank-location slid-grid)
+              slid-to   (blank-location grid)
+              aim       (tile-location (goal grid) slid-tile)
+              prev      (manhattan-distance slid-from aim)
+              curr      (manhattan-distance slid-to aim)
+              trend     (if (< prev curr) inc dec)]
+          (with-meta slid-grid {:tile slid-tile :trend trend})))))
 
 (defn slide-up
   "Slides a tile up"
@@ -150,11 +163,6 @@
    [grid]
    (filter #(not= grid %)
            ((juxt slide-up slide-down slide-left slide-right) grid)))
-
-(defn manhattan-distance
-  "Calculates the Manhattan distance between two points"
-  [u v]
-  (reduce + (map #(Math/abs (- %1 %2)) u v)))
 
 (defn targets
   "Returns a list of [x y] coordinates for each tile's position in grid
