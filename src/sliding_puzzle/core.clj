@@ -187,15 +187,16 @@
    and recur with updated queue and bound."
   [state bound]
   (loop [state state bound bound]
-    (let [[[steps current toll] priority] (peek state)
-          journey (conj steps current) fee (inc toll)]
+    (let [[[steps current cost fee] priority] (peek state)
+          journey (conj steps current) fee (inc fee)]
       (if (solved? current)
           journey
           (if (> priority bound)
               priority
               (recur (into (pop state)
-                      (for [g (remove #(= % (last steps)) (slides current))]
-                           [[journey g fee] (+ fee (cost g))]))
+                      (for [g (remove #(= % (last steps)) (slides current))
+                            :let [cost ((-> g meta :trend) cost)]]
+                           [[journey g cost fee] (+ cost fee)]))
                      bound))))))
 
 (defn ida-star
@@ -204,7 +205,8 @@
    we're done. Otherwise, recur with the returned bound."
   [grid bound]
     (loop [threshold bound]
-      (let [state (priority-map [[] grid 0] (cost grid))
+      (let [cost bound
+            state (priority-map [[] grid cost 0] cost)
             result (search state threshold)]
         (if (coll? result)
             result
