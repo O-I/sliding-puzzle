@@ -1,5 +1,8 @@
 (ns sliding-puzzle.core
-  (:require [clojure.data.priority-map :refer :all]))
+  (:require [clojure.data.priority-map :refer :all]
+            [taoensso.timbre :as timbre]))
+
+(timbre/refer-timbre)
 
 (defn random-grid
   "Builds a map that represents a sliding puzzle grid.
