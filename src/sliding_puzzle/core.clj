@@ -194,7 +194,7 @@
           (if (> priority bound)
               priority
               (recur (into (pop state)
-                      (for [g (remove #(= % (last steps)) (slides current))
+                      (for [g (remove #(= % (peek steps)) (slides current))
                             :let [cost ((-> g meta :trend) cost)]]
                            [[journey g cost fee] (+ cost fee)]))
                      bound))))))
