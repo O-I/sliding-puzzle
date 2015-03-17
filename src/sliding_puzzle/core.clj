@@ -189,7 +189,7 @@
    all next states onto the priority queue with their respective costs,
    and recur with updated queue and bound."
   [state bound]
-  (loop [state state bound bound]
+  (loop [state state]
     (let [[[steps current cost fee] priority] (peek state)
           journey (conj steps current) fee (inc fee)]
       (if (solved? current)
@@ -199,8 +199,7 @@
               (recur (into (pop state)
                       (for [g (remove #(= % (peek steps)) (slides current))
                             :let [cost ((-> g meta :trend) cost)]]
-                           [[journey g cost fee] (+ cost fee)]))
-                     bound))))))
+                           [[journey g cost fee] (+ cost fee)]))))))))
 
 (defn ida-star
   "IDA* wrapper — takes a grid and bound, initially set to the grid's cost and
