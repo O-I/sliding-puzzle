@@ -202,24 +202,24 @@
                            [[journey g cost fee] (+ cost fee)]))))))))
 
 (defn ida-star
-  "IDA* wrapper — takes a grid and bound, initially set to the grid's cost and
-   calls search with the initial state and bound. If a collection is returned,
-   we're done. Otherwise, recur with the returned bound."
-  [grid bound]
-    (loop [threshold bound]
-      (let [cost bound
-            state (priority-map [[] grid cost 0] cost)
-            result (search state threshold)]
-        (if (coll? result)
-            result
-            (recur result)))))
+  "IDA* wrapper — takes a solvable grid, and calls search with the
+   initial state and its cost as an initial bound. If a collection
+   is returned, we're done. Otherwise, recur with the returned bound."
+  [grid]
+    (let [cost (cost grid)
+          state (priority-map [[] grid cost 0] cost)]
+      (loop [threshold cost]
+        (let [result (search state threshold)]
+          (if (coll? result)
+              result
+              (recur result))))))
 
 (defn solve
   "Returns the minimum move solution for a grid
    or an empty vector if the grid is unsolvable"
    [grid]
    (if (solvable? grid)
-       (ida-star grid (cost grid))
+       (ida-star grid)
        []))
 
 (defn -main [] )
