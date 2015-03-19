@@ -137,8 +137,8 @@
               aim       (tile-location (goal grid) slid-tile)
               prev      (manhattan-distance slid-from aim)
               curr      (manhattan-distance slid-to aim)
-              trend     (if (< prev curr) inc dec)]
-          (with-meta slid-grid {:tile slid-tile :trend trend})))))
+              fee       (if (< prev curr) 2 0)]
+          (with-meta slid-grid {:tile slid-tile :fee fee})))))
 
 (defn slide-up
   "Slides a tile up"
@@ -190,16 +190,15 @@
    and recur with updated queue and bound."
   [state bound]
   (loop [state state]
-    (let [[[steps current cost fee] priority] (peek state)
-          journey (conj steps current) fee (inc fee)]
+    (let [[[steps current] priority] (peek state)
+          journey (conj steps current)]
       (if (solved? current)
           journey
           (if (> priority bound)
               priority
               (recur (into (pop state)
-                      (for [g (remove #(= % (peek steps)) (slides current))
-                            :let [cost ((-> g meta :trend) cost)]]
-                           [[journey g cost fee] (+ cost fee)]))))))))
+                      (for [g (remove #(= % (peek steps)) (slides current))]
+                           [[journey g] (+ (-> g meta :fee) priority)]))))))))
 
 (defn ida-star
   "IDA* wrapper — takes a solvable grid, and calls search with the
@@ -207,7 +206,7 @@
    is returned, we're done. Otherwise, recur with the returned bound."
   [grid]
     (let [cost (cost grid)
-          state (priority-map [[] grid cost 0] cost)]
+          state (priority-map [[] grid] cost)]
       (loop [threshold cost]
         (let [result (search state threshold)]
           (if (coll? result)
