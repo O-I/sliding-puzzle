@@ -117,6 +117,16 @@
   [[x1 y1] [x2 y2]]
   (+ (Math/abs ^Integer (- x2 x1)) (Math/abs ^Integer (- y2 y1))))
 
+(defn opposite
+  "Returns the opposite direction"
+  [direction]
+  (condp = direction
+    :up    :down
+    :down  :up
+    :left  :right
+    :right :left
+    nil))
+
 (defn slide
   "Slides a tile given a grid and a direction"
   [{:keys [size tiles] :as grid} direction]

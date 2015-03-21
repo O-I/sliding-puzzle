@@ -144,6 +144,14 @@
     (is (= 4 (manhattan-distance [1 2] [3 0])))
     (is (= 6 (manhattan-distance [0 0] [3 3])))))
 
+(deftest opposite-test
+  (testing "opposite"
+    (is (= :down  (opposite :up)))
+    (is (= :up    (opposite :down)))
+    (is (= :right (opposite :left)))
+    (is (= :left  (opposite :right)))
+    (is (nil?     (opposite nil)))))
+
 (deftest targets-test
   (testing "targets"
     (let [grid {:size 3 :tiles [8 6 7 2 5 4 3 0 1]}
