@@ -174,7 +174,7 @@
   "Returns a vector of all possible grid states from the current one.
    This excludes any moves that result in no change to the current state."
    [grid]
-   (filter #(not= grid %)
+   (remove #(= grid %)
            ((juxt slide-up slide-down slide-left slide-right) grid)))
 
 (defn targets
@@ -182,7 +182,7 @@
    g1 in relation to grid g2"
   [g1 g2]
   (map (juxt #(tile-at-row g1 %) #(tile-at-column g1 %))
-       (filter #(not= 0 %) (:tiles g2))))
+       (remove zero? (:tiles g2))))
 
 (defn cost
   "Calculates the cost of a grid state"
