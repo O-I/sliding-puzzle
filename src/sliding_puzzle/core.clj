@@ -14,7 +14,7 @@
 (defn tile-at
   "Finds the position of a tile in a grid"
   [{:keys [tiles]} tile]
-  (.indexOf tiles tile))
+  (first (keep-indexed #(when (= tile %2) %1) tiles)))
 
 (defn blank-at
   "Finds the blank in the grid represented by 0"
