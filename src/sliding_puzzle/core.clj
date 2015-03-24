@@ -117,6 +117,14 @@
   [[x1 y1] [x2 y2]]
   (+ (Math/abs ^Integer (- x2 x1)) (Math/abs ^Integer (- y2 y1))))
 
+(defn directions
+  "Returns the set of possible directions for a grid"
+  [grid]
+  (let [ways  [:up :down :left :right]
+        preds ((juxt blank-at-bottom? blank-at-top?
+                blank-at-far-left? blank-at-far-right?) grid)]
+    (remove nil? (map #(when-not %1 %2) preds ways))))
+
 (defn opposite
   "Returns the opposite direction"
   [direction]
