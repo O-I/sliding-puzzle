@@ -156,7 +156,7 @@
               prev      (manhattan-distance slid-from aim)
               curr      (manhattan-distance slid-to aim)
               fee       (if (< prev curr) 2 0)]
-          (with-meta slid-grid {:tile slid-tile :fee fee})))))
+          (with-meta slid-grid {:tile slid-tile :fee fee :dir direction})))))
 
 (defn slide-up
   "Slides a tile up"
