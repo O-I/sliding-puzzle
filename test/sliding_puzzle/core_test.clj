@@ -144,6 +144,17 @@
     (is (= 4 (manhattan-distance [1 2] [3 0])))
     (is (= 6 (manhattan-distance [0 0] [3 3])))))
 
+(deftest directions-test
+  (testing "directions"
+    (is (= '(:up :down :left :right)
+           (directions {:size 3 :tiles [1 2 3 4 0 5 6 7 8]})))
+    (is (= '(:down :right)
+           (directions {:size 3 :tiles [1 2 3 4 5 6 7 8 0]})))
+    (is (= '(:up :left)
+           (directions {:size 3 :tiles [0 1 2 3 4 5 6 7 8]})))
+    (is (= '(:up :left :right)
+           (directions {:size 3 :tiles [1 0 2 3 4 5 6 7 8]})))))
+
 (deftest opposite-test
   (testing "opposite"
     (is (= :down  (opposite :up)))
