@@ -122,7 +122,7 @@
   [grid]
   (let [ways  [:up :down :left :right]
         preds ((juxt blank-at-bottom? blank-at-top?
-                blank-at-far-left? blank-at-far-right?) grid)]
+                blank-at-far-right? blank-at-far-left?) grid)]
     (remove nil? (map #(when-not %1 %2) preds ways))))
 
 (defn opposite
