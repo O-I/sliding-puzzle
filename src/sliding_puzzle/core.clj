@@ -1,6 +1,7 @@
 (ns sliding-puzzle.core
   (:require [clojure.data.priority-map :refer :all]
-            [taoensso.timbre :as timbre]))
+            [taoensso.timbre :as timbre]
+            [sliding-puzzle.cheaplist :refer :all]))
 
 (timbre/refer-timbre)
 
