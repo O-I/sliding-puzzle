@@ -215,9 +215,11 @@
           journey
           (if (> priority bound)
               priority
-              (recur (into (pop state)
-                      (for [g (remove #(= % (peek steps)) (slides current))]
-                           [[journey g] (+ (-> g meta :fee) priority)]))))))))
+              (let [ways (for [g (map #(slide current %)
+                                 (remove #(= % (-> current meta :dir opposite))
+                                         (directions current)))]
+                              [[journey g] (+ (-> g meta :fee) priority)])]
+                (recur (into (pop state) ways))))))))
 
 (defn ida-star
   "IDA* wrapper — takes a solvable grid, and calls search with the
