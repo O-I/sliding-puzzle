@@ -23,8 +23,8 @@
 
 (deftest goal-test
   (testing "goal"
-    (is (=       {:size 3 :tiles [1 2 3 4 5 6 7 8 0]}
-           (goal {:size 3 :tiles [2 3 1 4 7 5 0 6 8]})))))
+    (is (=     {:size 3 :tiles [1 2 3 4 5 6 7 8 0]}
+           (-> {:size 3 :tiles [2 3 1 4 7 5 0 6 8]} :size goal)))))
 
 (deftest solved?-test
   (testing "solved?"

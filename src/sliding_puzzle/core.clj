@@ -27,15 +27,17 @@
   [{:keys [tiles]}]
   (count tiles))
 
-(defn goal
-  "Returns the expected goal state of a grid"
-  [{:keys [size] :as grid}]
-  {:size size :tiles (conj (vec (range 1 (tile-count grid))) 0)})
+(defn goal-aux
+  "Returns the expected goal state given a grid size"
+  [size]
+  {:size size :tiles (conj (vec (range 1 (* size size))) 0)})
+
+(def goal (memoize goal-aux))
 
 (defn solved?
   "Returns true if grid is in a solved state"
   [grid]
-  (= (goal grid) grid))
+  (= (-> grid :size goal) grid))
 
 (defn tile-at-row
   "Returns the row of the given tile"
@@ -153,7 +155,7 @@
               slid-tile ((:tiles slid-grid) blank)
               slid-from (blank-location slid-grid)
               slid-to   (blank-location grid)
-              aim       (tile-location (goal grid) slid-tile)
+              aim       (tile-location (-> grid :size goal) slid-tile)
               prev      (manhattan-distance slid-from aim)
               curr      (manhattan-distance slid-to aim)
               fee       (if (< prev curr) 2 0)]
@@ -197,7 +199,7 @@
   "Calculates the cost of a grid state"
   [grid]
     (let [current-state (targets grid grid)
-          goal-state    (targets (goal grid) grid)]
+          goal-state    (targets (-> grid :size goal) grid)]
     (reduce + (map #(manhattan-distance %1 %2) current-state goal-state))))
 
 (defn search
