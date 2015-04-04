@@ -12,15 +12,19 @@
    [n]
    {:size n :tiles (shuffle (range (* n n)))})
 
-(defn tile-at
+(defn tile-at-aux
   "Finds the position of a tile in a grid"
   [{:keys [tiles]} tile]
   (first (keep-indexed #(when (= tile %2) %1) tiles)))
 
-(defn blank-at
+(def tile-at (memoize tile-at-aux))
+
+(defn blank-at-aux
   "Finds the blank in the grid represented by 0"
   [grid]
   (tile-at grid 0))
+
+(def blank-at (memoize blank-at-aux))
 
 (defn tile-count
   "Returns the number of tiles in grid plus the blank"
@@ -39,35 +43,47 @@
   [grid]
   (= (-> grid :size goal) grid))
 
-(defn tile-at-row
+(defn tile-at-row-aux
   "Returns the row of the given tile"
   [{:keys [size] :as grid} tile]
   (quot (tile-at grid tile) size))
 
-(defn tile-at-column
+(def tile-at-row (memoize tile-at-row-aux))
+
+(defn tile-at-column-aux
   "Returns the column of the given tile"
   [{:keys [size] :as grid} tile]
   (rem (tile-at grid tile) size))
 
-(defn tile-location
+(def tile-at-column (memoize tile-at-column-aux))
+
+(defn tile-location-aux
   "Returns the [row column] of the given tile"
   [grid tile]
   [(tile-at-row grid tile) (tile-at-column grid tile)])
 
-(defn blank-at-row
+(def tile-location (memoize tile-location-aux))
+
+(defn blank-at-row-aux
   "Returns the row of the blank tile"
   [grid]
   (tile-at-row grid 0))
 
-(defn blank-at-column
+(def blank-at-row (memoize blank-at-row-aux))
+
+(defn blank-at-column-aux
   "Returns the column of the blank tile"
   [grid]
   (tile-at-column grid 0))
 
-(defn blank-location
+(def blank-at-column (memoize blank-at-column-aux))
+
+(defn blank-location-aux
   "Returns the [row column] of the blank tile"
   [grid]
   [(blank-at-row grid) (blank-at-column grid)])
+
+(def blank-location (memoize blank-location-aux))
 
 (defn slices
   "Returns a list of tile-count many lists where each
