@@ -168,7 +168,7 @@
     :right :left
     nil))
 
-(defn slide
+(defn slide-aux
   "Slides a tile given a grid and a direction"
   [{:keys [size tiles] :as grid} direction]
   (let [blank (blank-at grid)
@@ -190,6 +190,8 @@
               curr      (manhattan-distance slid-to aim)
               fee       (if (< prev curr) 2 0)]
           (with-meta slid-grid {:tile slid-tile :fee fee :dir direction})))))
+
+(def slide (memoize slide-aux))
 
 (defn slide-up
   "Slides a tile up"
