@@ -241,9 +241,9 @@
    bound, return it to ida-star. Otherwise, pop the current state, push
    all next states onto the priority queue with their respective costs,
    and recur with updated queue and bound."
-  [state bound]
-  (loop [state state]
-    (let [[[steps current] priority] (peek state)
+  [states bound]
+  (loop [states states]
+    (let [[[steps current] priority] (peek states)
           journey (conj steps current)]
       (if (solved? current)
           journey
@@ -253,7 +253,7 @@
                                  (remove #(= % (-> current meta :dir opposite))
                                          (directions current)))]
                               [[journey g] (+ (-> g meta :fee) priority)])]
-                (recur (into (pop state) ways))))))))
+                (recur (into (pop states) ways))))))))
 
 (defn ida-star
   "IDA* wrapper — takes a solvable grid, and calls search with the
@@ -261,9 +261,9 @@
    is returned, we're done. Otherwise, recur with the returned bound."
   [grid]
     (let [cost (cost grid)
-          state (priority-map [[] grid] cost)]
+          states (priority-map [[] grid] cost)]
       (loop [threshold cost]
-        (let [result (search state threshold)]
+        (let [result (search states threshold)]
           (if (coll? result)
               result
               (recur result))))))
