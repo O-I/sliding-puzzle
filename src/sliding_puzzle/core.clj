@@ -230,9 +230,9 @@
 (defn cost
   "Calculates the cost of a grid state"
   [grid]
-    (let [current-state (targets grid grid)
-          goal-state    (targets (-> grid :size goal) grid)]
-    (reduce + (map #(manhattan-distance %1 %2) current-state goal-state))))
+  (let [current-state (targets grid grid)
+        goal-state    (targets (-> grid :size goal) grid)]
+  (reduce + (map #(manhattan-distance %1 %2) current-state goal-state))))
 
 (defn search
   "IDA* algorithm — takes a priority queue of grid states and a bound.
@@ -259,13 +259,13 @@
    initial state and its cost as an initial bound. If a collection
    is returned, we're done. Otherwise, recur with the returned bound."
   [grid]
-    (let [cost (cost grid)
-          states (priority-map [[] grid] cost)]
-      (loop [threshold cost]
-        (let [result (search states threshold)]
-          (if (coll? result)
-              result
-              (recur result))))))
+  (let [cost (cost grid)
+        states (priority-map [[] grid] cost)]
+    (loop [threshold cost]
+      (let [result (search states threshold)]
+        (if (coll? result)
+            result
+            (recur result))))))
 
 (defn solve
   "Returns the minimum move solution for a grid
