@@ -242,18 +242,17 @@
    all next states onto the priority queue with their respective costs,
    and recur with updated queue and bound."
   [states bound]
-  (loop [states states]
-    (let [[[steps current] priority] (peek states)
-          journey (conj steps current)]
-      (if (solved? current)
-          journey
-          (if (> priority bound)
-              priority
-              (let [ways (for [g (map #(slide current %)
-                                 (remove #(= % (-> current meta :dir opposite))
-                                         (directions current)))]
-                              [[journey g] (+ (-> g meta :fee) priority)])]
-                (recur (into (pop states) ways))))))))
+  (let [[[steps current] priority] (peek states)
+        journey (conj steps current)]
+    (if (solved? current)
+        journey
+        (if (> priority bound)
+            priority
+            (let [ways (for [g (map #(slide current %)
+                               (remove #(= % (-> current meta :dir opposite))
+                                       (directions current)))]
+                            [[journey g] (+ (-> g meta :fee) priority)])]
+              (recur (into (pop states) ways) bound))))))
 
 (defn ida-star
   "IDA* wrapper — takes a solvable grid, and calls search with the
