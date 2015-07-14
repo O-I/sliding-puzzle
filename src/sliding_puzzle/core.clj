@@ -234,6 +234,14 @@
         goal-state    (targets (-> grid :size goal) grid)]
   (reduce + (map #(manhattan-distance %1 %2) current-state goal-state))))
 
+(defn- ways-forward
+  "Returns all next states from a given state that result in a
+  positive gain, i.e., filters out the current and previous states."
+  [grid]
+  (map #(slide grid %)
+       (remove #(= % (-> grid meta :dir opposite))
+               (directions grid))))
+
 (defn search
   "IDA* algorithm — takes a priority queue of grid states and a bound.
    If the current grid state is solved, returns a vector of the steps
@@ -248,9 +256,7 @@
         journey
         (if (> priority bound)
             priority
-            (let [ways (for [g (map #(slide current %)
-                               (remove #(= % (-> current meta :dir opposite))
-                                       (directions current)))]
+            (let [ways (for [g (ways-forward current)]
                             [[journey g] (+ (-> g meta :fee) priority)])]
               (recur (into (pop states) ways) bound))))))
 
