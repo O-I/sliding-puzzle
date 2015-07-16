@@ -9,9 +9,8 @@
 
 (defmulti locations class)
 
-(defmethod locations Grid [grid]
-  (let [size (:size grid) tiles (:tiles grid)]
-    (zipmap tiles (for [i (range size) j (range size)] [i j]))))
+(defmethod locations Grid [{:keys [size tiles]}]
+  (zipmap tiles (for [i (range size) j (range size)] [i j])))
 
 (defn make-grid
   "Builds a square Grid left to right, top to bottom
