@@ -211,7 +211,7 @@
               slid-tile ((:tiles slid-grid) blank)
               slid-from (:blank-location slid-grid)
               slid-to   blank-location
-              aim       (tile-location (-> grid :size goal) slid-tile) ; is there a better way?
+              aim       [(quot (dec slid-tile) size) (rem (dec slid-tile) size)]
               prev      (manhattan-distance slid-from aim)
               curr      (manhattan-distance slid-to aim)
               fee       (if (< prev curr) 2 0)]
