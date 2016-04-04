@@ -23,7 +23,13 @@
    :size is the height/width n of the grid and :tiles
    is an n^2 - 1 random vector representing the grid state."
    [n]
-   {:size n :tiles (shuffle (range (* n n)))})
+   (let [tiles (shuffle (range (* n n)))
+         blank-at (.indexOf tiles 0)]
+     {:size n
+      :tiles tiles
+      :blank-at blank-at
+      :blank-location [(quot blank-at n) (rem blank-at n)]})
+   )
 
 (defn tile-at-aux
   "Finds the position of a tile in a grid"
@@ -47,7 +53,8 @@
 (defn goal-aux
   "Returns the expected goal state given a grid size"
   [size]
-  {:size size :tiles (conj (vec (range 1 (* size size))) 0)})
+  {:size size :tiles (conj (vec (range 1 (* size size))) 0)
+   :blank-at (dec (* size size)) :blank-location [(dec size) (dec size)]})
 
 (def goal (memoize goal-aux))
 
@@ -124,25 +131,45 @@
   [v i j]
   (assoc v j (v i) i (v j)))
 
+; (defn blank-at-top?
+;   "Returns true if the blank tile is in the first row of a grid"
+;   [grid]
+;   (zero? (blank-at-row grid)))
+
 (defn blank-at-top?
   "Returns true if the blank tile is in the first row of a grid"
-  [grid]
-  (zero? (blank-at-row grid)))
+  [{:keys [blank-location]}]
+  (zero? (blank-location 0)))
+
+; (defn blank-at-bottom?
+;   "Returns true if the blank tile is in the last row of a grid"
+;   [{:keys [size] :as grid}]
+;   (= (dec size) (blank-at-row grid)))
 
 (defn blank-at-bottom?
   "Returns true if the blank tile is in the last row of a grid"
-  [{:keys [size] :as grid}]
-  (= (dec size) (blank-at-row grid)))
+  [{:keys [size blank-location]}]
+  (= (dec size) (blank-location 0)))
+
+; (defn blank-at-far-left?
+;   "Returns true if the blank tile is in the first column of a grid"
+;   [grid]
+;   (zero? (blank-at-column grid)))
 
 (defn blank-at-far-left?
   "Returns true if the blank tile is in the first column of a grid"
-  [grid]
-  (zero? (blank-at-column grid)))
+  [{:keys [blank-location]}]
+  (zero? (blank-location 1)))
+
+; (defn blank-at-far-right?
+;   "Returns true if the blank tile is in the last column of a grid"
+;   [{:keys [size] :as grid}]
+;   (= (dec size) (blank-at-column grid)))
 
 (defn blank-at-far-right?
   "Returns true if the blank tile is in the last column of a grid"
-  [{:keys [size] :as grid}]
-  (= (dec size) (blank-at-column grid)))
+  [{:keys [size blank-location]}]
+  (= (dec size) (blank-location 1)))
 
 (defn manhattan-distance
   "Calculates the Manhattan distance between two points"
@@ -166,6 +193,31 @@
     :left  :right
     :right :left
     nil))
+
+(defn move-aux
+  [{:keys [size tiles blank-at blank-location] :as grid} direction]
+  (let [blank blank-at
+        [x y] blank-location
+        [pred index location]
+        (condp = direction
+          :up    [(= size (inc x)) (+   blank size) [(inc x) y]]  ; blank-at-bottom
+          :down  [(= 0 x)          (-   blank size) [(dec x) y]]  ; blank-at-top
+          :left  [(= size (inc y)) (inc blank)      [x (inc y)]]  ; blank-at-far-right
+          :right [(= 0 y)          (dec blank)      [x (dec y)]]) ; blank-at-far-left
+        tile index]
+    (if pred
+        grid
+        (let [slid-grid {:size size :tiles (swap tiles blank tile) :blank-at tile :blank-location location}
+              slid-tile ((:tiles slid-grid) blank)
+              slid-from (:blank-location slid-grid)
+              slid-to   blank-location
+              aim       (tile-location (-> grid :size goal) slid-tile) ; is there a better way?
+              prev      (manhattan-distance slid-from aim)
+              curr      (manhattan-distance slid-to aim)
+              fee       (if (< prev curr) 2 0)]
+          (with-meta slid-grid {:tile slid-tile :fee fee :dir direction})))))
+
+(def move (memoize move-aux))
 
 (defn slide-aux
   "Slides a tile given a grid and a direction"
@@ -237,7 +289,7 @@
   "Returns all next states from a given state that result in a
   positive gain, i.e., filters out the current and previous states."
   [grid]
-  (map #(slide grid %)
+  (map #(move grid %) ; #(slide grid %)
        (remove #(= % (-> grid meta :dir opposite))
                (directions grid))))
 
