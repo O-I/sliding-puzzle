@@ -61,7 +61,8 @@
 (defn solved?
   "Returns true if grid is in a solved state"
   [grid]
-  (= (-> grid :size goal) grid))
+  (p :solved?
+  (= (-> grid :size goal) grid)))
 
 (defn tile-at-row-aux
   "Returns the row of the given tile"
@@ -179,10 +180,11 @@
 (defn directions
   "Returns the set of possible directions for a grid"
   [grid]
+  (p :directions
   (let [ways  [:up :down :left :right]
         preds ((juxt blank-at-bottom? blank-at-top?
                 blank-at-far-right? blank-at-far-left?) grid)]
-    (remove nil? (map #(when-not %1 %2) preds ways))))
+    (remove nil? (map #(when-not %1 %2) preds ways)))))
 
 (defn opposite
   "Returns the opposite direction"
@@ -196,6 +198,7 @@
 
 (defn move-aux
   [{:keys [size tiles blank-at blank-location] :as grid} direction]
+  (p :move
   (let [blank blank-at
         [x y] blank-location
         [pred index location]
@@ -215,61 +218,61 @@
               prev      (manhattan-distance slid-from aim)
               curr      (manhattan-distance slid-to aim)
               fee       (if (< prev curr) 2 0)]
-          (with-meta slid-grid {:tile slid-tile :fee fee :dir direction})))))
+          (with-meta slid-grid {:tile slid-tile :fee fee :dir direction}))))))
 
 (def move (memoize move-aux))
 
-(defn slide-aux
-  "Slides a tile given a grid and a direction"
-  [{:keys [size tiles] :as grid} direction]
-  (let [blank (blank-at grid)
-        [pred index]
-        (condp = direction
-          :up    [(blank-at-bottom?    grid) (+   blank size)]
-          :down  [(blank-at-top?       grid) (-   blank size)]
-          :left  [(blank-at-far-right? grid) (inc blank)]
-          :right [(blank-at-far-left?  grid) (dec blank)])
-        tile index]
-    (if pred
-        grid
-        (let [slid-grid {:size size :tiles (swap tiles blank tile)}
-              slid-tile ((:tiles slid-grid) blank)
-              slid-from (blank-location slid-grid)
-              slid-to   (blank-location grid)
-              aim       (tile-location (-> grid :size goal) slid-tile)
-              prev      (manhattan-distance slid-from aim)
-              curr      (manhattan-distance slid-to aim)
-              fee       (if (< prev curr) 2 0)]
-          (with-meta slid-grid {:tile slid-tile :fee fee :dir direction})))))
+; (defn slide-aux
+;   "Slides a tile given a grid and a direction"
+;   [{:keys [size tiles] :as grid} direction]
+;   (let [blank (blank-at grid)
+;         [pred index]
+;         (condp = direction
+;           :up    [(blank-at-bottom?    grid) (+   blank size)]
+;           :down  [(blank-at-top?       grid) (-   blank size)]
+;           :left  [(blank-at-far-right? grid) (inc blank)]
+;           :right [(blank-at-far-left?  grid) (dec blank)])
+;         tile index]
+;     (if pred
+;         grid
+;         (let [slid-grid {:size size :tiles (swap tiles blank tile)}
+;               slid-tile ((:tiles slid-grid) blank)
+;               slid-from (blank-location slid-grid)
+;               slid-to   (blank-location grid)
+;               aim       (tile-location (-> grid :size goal) slid-tile)
+;               prev      (manhattan-distance slid-from aim)
+;               curr      (manhattan-distance slid-to aim)
+;               fee       (if (< prev curr) 2 0)]
+;           (with-meta slid-grid {:tile slid-tile :fee fee :dir direction})))))
 
-(def slide (memoize slide-aux))
+; (def slide (memoize slide-aux))
 
-(defn slide-up
-  "Slides a tile up"
-  [grid]
-  (slide grid :up))
+; (defn slide-up
+;   "Slides a tile up"
+;   [grid]
+;   (slide grid :up))
 
-(defn slide-down
-  "Slides a tile down"
-  [grid]
-  (slide grid :down))
+; (defn slide-down
+;   "Slides a tile down"
+;   [grid]
+;   (slide grid :down))
 
-(defn slide-left
-  "Slides a tile left"
-  [grid]
-  (slide grid :left))
+; (defn slide-left
+;   "Slides a tile left"
+;   [grid]
+;   (slide grid :left))
 
-(defn slide-right
-  "Slides a tile right"
-  [grid]
-  (slide grid :right))
+; (defn slide-right
+;   "Slides a tile right"
+;   [grid]
+;   (slide grid :right))
 
-(defn slides
-  "Returns a vector of all possible grid states from the current one.
-   This excludes any moves that result in no change to the current state."
-   [grid]
-   (remove #(= grid %)
-           ((juxt slide-up slide-down slide-left slide-right) grid)))
+; (defn slides
+;   "Returns a vector of all possible grid states from the current one.
+;    This excludes any moves that result in no change to the current state."
+;    [grid]
+;    (remove #(= grid %)
+;            ((juxt slide-up slide-down slide-left slide-right) grid)))
 
 (defn targets
   "Returns a list of [x y] coordinates for each tile's position in grid
@@ -289,9 +292,10 @@
   "Returns all next states from a given state that result in a
   positive gain, i.e., filters out the current and previous states."
   [grid]
+  (p :ways-forward
   (map #(move grid %) ; #(slide grid %)
        (remove #(= % (-> grid meta :dir opposite))
-               (directions grid))))
+               (directions grid)))))
 
 (defn search
   "IDA* algorithm — takes a priority queue of grid states and a bound.
@@ -301,7 +305,7 @@
    all next states onto the priority queue with their respective costs,
    and recur with updated queue and bound."
   [states bound]
-  (let [[[steps current] priority] (peek states)
+  (let [[[steps current] priority] (p :peek (peek states))
         journey (conj steps current)]
     (if (solved? current)
         journey
@@ -309,7 +313,7 @@
             priority
             (let [ways (for [g (ways-forward current)]
                             [[journey g] (+ (-> g meta :fee) priority)])]
-              (recur (into (pop states) ways) bound))))))
+              (recur (p :into (into (pop states) ways)) bound))))))
 
 (defn ida-star
   "IDA* wrapper — takes a solvable grid, and calls search with the
